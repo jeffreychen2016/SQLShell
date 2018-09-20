@@ -3,7 +3,6 @@ using System.Data.Odbc;
 
 namespace SQLShell
 {
-
     class Program
     {
         static void Main(string[] args)
@@ -15,34 +14,14 @@ namespace SQLShell
 
             DbConnection.Open();
 
-            Console.Write("SQL-> ");
-
-            var query = Console.ReadLine();
- 
+            Console.WriteLine("Press any key to run your query.");
+            Console.ReadLine();
 
             var DbCommand = DbConnection.CreateCommand();
-            DbCommand.CommandText = query;
+            DbCommand.CommandText = new ReadFromFile().ReadFileThenReturnQueryString();
+
             var DbReader = DbCommand.ExecuteReader();
-
-            int fCount = DbReader.FieldCount;
-            for (int i = 0; i < fCount; i++)
-            {
-                var fName = DbReader.GetName(i);
-                Console.Write(fName + ":");
-            }
-            Console.WriteLine();
-
-            while (DbReader.Read())
-            {
-                Console.Write(":");
-                for (int i = 0; i < fCount; i++)
-                {
-                    String col = DbReader.GetString(i);
-
-                    Console.Write(col + ":");
-                }
-                Console.WriteLine();
-            }
+            new WriteToFile().WriteQueryResultToFile(DbReader);
 
             DbReader.Close();
             DbCommand.Dispose();
